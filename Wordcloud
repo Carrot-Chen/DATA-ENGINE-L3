@@ -1,0 +1,47 @@
+# -*- coding:utf-8 -*-
+# 词云展示，edited by Carrot CHEN.
+from wordcloud import WordCloud
+import pandas as pd
+import matplotlib.pyplot as plt
+from PIL import Image
+import numpy as np
+from lxml import etree
+from nltk.tokenize import word_tokenize
+
+
+# 使用函数去掉停用词
+def remove_stop_words(f):
+	stop_words = ['|','(no genres listed)']
+	for stop_word in stop_words:
+		f = f.replace(stop_word, ' ')
+	return f
+
+# 生成词云，函数封装
+def create_word_cloud(f):
+	print('根据词频，开始生成词云!')
+	removef = remove_stop_words(f)
+    #print(f)
+	cut_text = word_tokenize(removef)
+	cut_text = " ".join(cut_text)
+    #print(cut_text)
+	wc = WordCloud(
+		max_words=100,
+		width=3000,
+		height=2400,
+        background_color='white'
+        )
+    
+	wordcloud = wc.generate(cut_text)
+	# 写词云图片
+	wordcloud.to_file("E:\Learnig\Python\wordcloud.jpg")
+	# 显示词云文件
+	plt.imshow(wordcloud)
+	plt.axis("off")
+	plt.show()
+
+# 数据加载
+data = pd.read_csv('./movies.csv')
+# 读取 genres字段
+genres = " ".join(data['genres'])
+#输出词云图片，出图结果艺术随机化（Wordcloud世界里没有完全相同的两张图么……）
+create_word_cloud(genres)
